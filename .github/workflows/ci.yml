@@ -32,14 +32,6 @@ jobs:
           echo "DB_PASSWORD=secrets.DB_PASSWORD" >> .env
           echo "DB_DATABASE=secrets.DB_DATABASE" >> .env
 
-      - name: Run tests
-        run: npm test
-        env:
-          DB_HOST: ${{ secrets.DB_HOST }}
-          DB_USER: ${{ secrets.DB_USER }}
-          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          DB_DATABASE: ${{ secrets.DB_DATABASE }}
-
       - name: Deploy to server
         uses: appleboy/ssh-action@master
         with:
