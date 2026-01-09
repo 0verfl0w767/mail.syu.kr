@@ -35,25 +35,25 @@ jobs:
       - name: Run tests
         run: npm test
 
-deploy:
-  runs-on: ubuntu-latest
-  needs: test-build
+    deploy:
+      runs-on: ubuntu-latest
+      needs: test-build
 
-  steps:
-    - name: Deploy to server
-      uses: appleboy/ssh-action@v0.1.3
-      with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        key: ${{ secrets.SSH_KEY }}
-        port: 22
-        script: |
-          cd /root/mail-register
-          git pull origin main
-          echo "SERVER_PORT=3000" >> .env
-          echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
-          echo "DB_USER=${{ secrets.DB_USER }}" >> .env
-          echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
-          echo "DB_DATABASE=${{ secrets.DB_DATABASE }}" >> .env
-          npm install
-          pm2 restart register
+      steps:
+        - name: Deploy to server
+          uses: appleboy/ssh-action@v0.1.3
+          with:
+            host: ${{ secrets.HOST }}
+            username: ${{ secrets.USERNAME }}
+            key: ${{ secrets.SSH_KEY }}
+            port: 22
+            script: |
+              cd /root/mail-register
+              git pull origin main
+              echo "SERVER_PORT=3000" >> .env
+              echo "DB_HOST=${{ secrets.DB_HOST }}" >> .env
+              echo "DB_USER=${{ secrets.DB_USER }}" >> .env
+              echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
+              echo "DB_DATABASE=${{ secrets.DB_DATABASE }}" >> .env
+              npm install
+              pm2 restart register
