@@ -1,0 +1,54 @@
+name: mail-register CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "24"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Create .env file
+        run: |
+          echo "SERVER_PORT=3000" >> .env
+          echo "DB_HOST=secrets.DB_HOST" >> .env
+          echo "DB_USER=secrets.DB_USER" >> .env
+          echo "DB_PASSWORD=secrets.DB_PASSWORD" >> .env
+          echo "DB_DATABASE=secrets.DB_DATABASE" >> .env
+
+      - name: Run tests
+        run: npm test
+        env:
+          DB_HOST: ${{ secrets.DB_HOST }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_DATABASE: ${{ secrets.DB_DATABASE }}
+
+      - name: Deploy to server
+        uses: actions/ssh-deploy@v2.0.7
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          script: |
+            cd /root/mail-register
+            git pull origin main
+            npm install
+            pm2 restart register
