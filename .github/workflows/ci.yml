@@ -1,4 +1,4 @@
-name: mail-register CI
+name: mail.syu.kr
 
 on:
   push:
@@ -41,7 +41,7 @@ jobs:
           DB_DATABASE: ${{ secrets.DB_DATABASE }}
 
       - name: Deploy to server
-        uses: actions/ssh-deploy@v2.0.7
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
